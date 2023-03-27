@@ -27,6 +27,16 @@ class GameBoard {
 class Game {
     constructor(gameBoard) {
         this.gameBoard = gameBoard;
+        this.winningCombos = [
+            [0,1,2],
+            [3,4,5],
+            [6,7,8],
+            [0,3,6],
+            [1,4,7],
+            [2,5,8],
+            [0,4,8],
+            [2,4,6],
+        ]
         this.isCrossTurn = true;
     }
 
@@ -35,15 +45,32 @@ class Game {
         this.gameBoard.drawBoard();
 
         // Set click listeners
-        const cells = this.gameBoard.activeCells;
-        
-        cells.forEach((cell) => {
-            cell.addEventListener("click", this.playRoundHandler.bind(this), {once:true});
+        this.cellElements = this.gameBoard.activeCells;
+        console.log(this.cellElements);
+
+        this.cellElements.forEach((cellElement) => {
+            cellElement.addEventListener("click", this.playRoundHandler.bind(this), {once:true});
         });
     }
 
     swapTurns() {
         this.isCrossTurn = !this.isCrossTurn;
+    }
+
+    checkForWin(mark) {
+        return this.winningCombos.some(combo => {
+            return combo.every(index => {
+                return this.cellElements[index].classList.contains(mark);
+            })
+        })
+    }
+
+    checkForDraw() {
+        const cellList = Array.prototype.slice.call(this.cellElements);
+        return cellList.every(cell => {
+            return cell.classList.contains(this.gameBoard.x_class)
+            || cell.classList.contains(this.gameBoard.o_class);
+        })
     }
 
     playRoundHandler(e) {
@@ -54,11 +81,15 @@ class Game {
         this.gameBoard.drawMark(currentCell, currentMark);
 
         // Check for a win
-
-        // Check for a draw
-
-        // Swap turns
-        this.swapTurns();
+        if (this.checkForWin(currentMark)) {
+            console.log(`${currentMark} wins`);
+        } else if (this.checkForDraw()) {
+            // Check for a draw
+            console.log("It's a draw");
+        } else {
+            // Swap turns
+            this.swapTurns();
+        }
     }
 }
 

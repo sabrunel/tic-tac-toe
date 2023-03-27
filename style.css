@@ -17,6 +17,14 @@ header {
     text-align: center;
 }
 
+button {
+    visibility: hidden;
+}
+
+button.visible {
+    visibility: visible;
+}
+
 #board {
     display:grid;
     grid-template-columns: repeat(3, 1fr);

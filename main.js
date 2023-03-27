@@ -1,8 +1,27 @@
+class UI {
+    constructor() {
+        // UI elements
+        this.boardElement = document.querySelector("#board");
+        this.outcomeText = document.querySelector("#outcome-text");
+        this.restartGameBtn = document.querySelector("button");
+    }
+
+    showRestartBtn() {
+        this.restartGameBtn.classList.add("visible");
+    }
+
+    setOutComeText(text) {
+        this.outcomeText.innerText = text;
+    }
+
+    clearOutcomeText() {
+        this.outcomeText.innerText = "";
+    }
+}
+
+
 class GameBoard {
     constructor() {
-        this.boardElement = document.querySelector("#board");
-        this.x_class = "cross";
-        this.o_class = "circle";
         this.startingBoard = ["", "", "", "", "", "", "", "", ""];
     }
 
@@ -10,23 +29,32 @@ class GameBoard {
         return document.querySelectorAll(".cell");
     }
 
-    drawBoard() {
+    drawBoard(parentElement) {
         this.startingBoard.forEach((_cell) => {
             const cell = document.createElement("div");
             cell.classList.add("cell");
-            this.boardElement.append(cell);
+            parentElement.append(cell);
         })
     }
 
     drawMark(cell, mark) {
         cell.classList.add(mark);
     }
+
+    clearBoard(parentElement) {
+        while (parentElement.firstChild) {
+            parentElement.removeChild(parentElement.lastChild);
+        }
+    }
 }
 
 
 class Game {
-    constructor(gameBoard) {
+    constructor(gameBoard, ui) {
         this.gameBoard = gameBoard;
+        this.ui = ui;
+        this.x_class = "cross";
+        this.o_class = "circle";
         this.winningCombos = [
             [0,1,2],
             [3,4,5],
@@ -42,11 +70,10 @@ class Game {
 
     startGame() {
         // Draw the board
-        this.gameBoard.drawBoard();
+        this.gameBoard.drawBoard(this.ui.boardElement);
 
         // Set click listeners
         this.cellElements = this.gameBoard.activeCells;
-        console.log(this.cellElements);
 
         this.cellElements.forEach((cellElement) => {
             cellElement.addEventListener("click", this.playRoundHandler.bind(this), {once:true});
@@ -68,30 +95,57 @@ class Game {
     checkForDraw() {
         const cellList = Array.prototype.slice.call(this.cellElements);
         return cellList.every(cell => {
-            return cell.classList.contains(this.gameBoard.x_class)
-            || cell.classList.contains(this.gameBoard.o_class);
+            return cell.classList.contains(this.x_class)
+            || cell.classList.contains(this.o_class);
         })
+    }
+
+    endGame() {
+        // Disable all click listeners
+        this.cellElements.forEach((cellElement) => {
+            cellElement.replaceWith(cellElement.cloneNode(true));
+        })
+
+        // Enable the Restart Game button
+        this.ui.showRestartBtn();
+        this.ui.restartGameBtn.addEventListener("click", this.resetGameHandler.bind(this))
     }
 
     playRoundHandler(e) {
         // Place a mark
         const currentCell = e.target;
-        const currentMark = this.isCrossTurn ? this.gameBoard.x_class : this.gameBoard.o_class
+        const currentMark = this.isCrossTurn ? this.x_class : this.o_class
 
         this.gameBoard.drawMark(currentCell, currentMark);
 
-        // Check for a win
+        // Check the outcome
         if (this.checkForWin(currentMark)) {
-            console.log(`${currentMark} wins`);
+            this.ui.setOutComeText(`${currentMark} wins`);
+            this.endGame();
         } else if (this.checkForDraw()) {
-            // Check for a draw
-            console.log("It's a draw");
+            this.ui.setOutComeText("It's a draw!");
+            this.endGame();
         } else {
-            // Swap turns
             this.swapTurns();
         }
     }
+
+    resetGameHandler() {
+        // Clear the current board
+        this.gameBoard.clearBoard(this.ui.boardElement);
+
+        // Clear the outcome text
+        this.ui.clearOutcomeText();
+
+        // Start a new game
+        this.startGame();
+    }
 }
 
-game = new Game(new GameBoard());
+const game = new Game(
+    new GameBoard(),
+    new UI()
+);
+
 game.startGame();
+

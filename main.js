@@ -10,6 +10,10 @@ class UI {
         this.restartGameBtn.classList.add("visible");
     }
 
+    hideRestartBtn() {
+        this.restartGameBtn.classList.remove("visible");
+    }
+
     setOutComeText(text) {
         this.outcomeText.innerText = text;
     }
@@ -120,7 +124,7 @@ class Game {
 
         // Check the outcome
         if (this.checkForWin(currentMark)) {
-            this.ui.setOutComeText(`${currentMark} wins`);
+            this.ui.setOutComeText(`${currentMark === this.x_class ? "Player X" : "Player O"} wins!`);
             this.endGame();
         } else if (this.checkForDraw()) {
             this.ui.setOutComeText("It's a draw!");
@@ -136,6 +140,7 @@ class Game {
 
         // Clear the outcome text
         this.ui.clearOutcomeText();
+        this.ui.hideRestartBtn();
 
         // Start a new game
         this.startGame();

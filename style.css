@@ -1,41 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Damion&family=Lato:wght@300;400;700&display=swap');
+
 *, ::before, ::after {
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    list-style: none;
 }
 
 body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 5rem;
+    gap: 3rem;
+    background-repeat: no-repeat;
+    background-image: linear-gradient(#2BC0E4, #EAECC6);
+    height: 100vh;
+    font-family: 'Lato', sans-serif;
 }
 
 header {
     padding-top: 2rem;
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+h1 {
+    font-family: 'Damion', cursive;
+    font-size: 4em;
+    text-shadow: white 2px 3px;
+}
+
+p {
+    font-size: 1.5em;
+    font-weight: 400;
 }
 
 button {
+    font-family:inherit;
+    font-size: 1.2em;
+    font-weight:700;
+    color: white;
+    border: none;
+    outline: none;
     visibility: hidden;
+    padding: 1rem 1.5rem;
+    border-radius: 50px;
+    background-color: #fd7167;
 }
 
 button.visible {
     visibility: visible;
 }
 
+main {
+    padding: 2rem;
+    border-radius: 20px;
+    background-color: white;
+}
+
 #board {
     display:grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 2px;
-    background-color: black;
+    background-color: rgb(230, 230, 230);
 }
 
 .cell {
     background-color: white;
-    height: 150px;
-    width: 150px;
+    height: 100px;
+    width: 100px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -50,14 +84,14 @@ button.visible {
 }
 
 .circle::before {    
-    width: 100px;
-    height: 100px;
-    background-color: black;
+    width: 80px;
+    height: 80px;
+    background-color: #fd7167;
 }
 
 .circle::after {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
     background-color: white;
 }
 
@@ -66,9 +100,10 @@ button.visible {
 .cross::after {
     content:"";
     position:absolute;
-    background-color: black;
+    background-color: #2BC0E4;
     height: 100px;
     width: 20px;
+    border-radius: 20px;
 }
 
 .cross::before {    
